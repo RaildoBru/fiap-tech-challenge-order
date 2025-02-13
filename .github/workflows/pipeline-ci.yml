@@ -1,0 +1,40 @@
+name: Build Project And Push Docker Image
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Obter o código do projeto
+        uses: actions/checkout@v4
+
+      - name: Configurar o ambiente
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+        
+      - name: Instalar as dependências
+        run: |
+          npm install
+          npm run build
+          npm run test
+
+      - name: Autenticar no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Contrução da imagem Docker
+        uses: docker/build-push-action@v6
+        with:
+          context: ./
+          push: true
+          file: ./Dockerfile
+          tags: |
+            ${{ vars.DOCKERHUB_USERNAME }}/fiap-tech-challenge-ms-order:${{ vars.DOCKER_IMAGE_VERSION }}
+            ${{ vars.DOCKERHUB_USERNAME }}/fiap-tech-challenge-ms-order:latest
