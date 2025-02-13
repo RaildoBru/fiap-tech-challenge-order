@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-order
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ms-order
+  template:
+    metadata:
+      labels:
+        app: ms-order
+    spec:
+      containers:
+        - name: ms-order
+          image: RaildoBru/fiap-tech-challenge-order
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              value: ${MONGO_URI}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-order
+spec:
+  type: LoadBalancer
+  selector:
+    app: ms-order
+  ports:
+    - port: 5000
+      targetPort: 5000
