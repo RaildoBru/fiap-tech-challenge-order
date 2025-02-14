@@ -35,4 +35,4 @@ spec:
     app: ms-order
   ports:
     - port: 8080
-      targetPort: 5000
+      targetPort: 3000

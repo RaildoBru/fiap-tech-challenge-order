@@ -31,7 +31,6 @@ jobs:
         with:
           manifests: |
             ./k8s/ms-order-deployment.yaml
-            ./k8s/secrets.yaml
           images: |
             ${{ vars.DOCKERHUB_USERNAME }}/fiap-tech-challenge-ms-order:${{ vars.DOCKER_IMAGE_DEPLOY_VERSION }}
 
