@@ -9,7 +9,7 @@ on:
       - 'Dockerfile'
       - 'k8s/**'
     branches:
-      - main
+      - master
 
 jobs:
   ci:
