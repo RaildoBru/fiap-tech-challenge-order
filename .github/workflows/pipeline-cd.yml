@@ -1,0 +1,40 @@
+name: Deploy project
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  cd:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
+    steps: 
+      - name: Autenticar na AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Configurar o kubectl
+        run: aws eks update-kubeconfig --name ${{ vars.K8S_CLUSTER_NAME }}
+
+      - name: Replace secrets in deployment
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: |
+          sed -i "s|\${MONGO_URI}|$MONGO_URI|g" k8s/ms-order-deployment.yaml
+
+      - name: Deploy dos manifestos no Kubernetes
+        uses: Azure/k8s-deploy@v5
+        with:
+          manifests: |
+            ./k8s/ms-order-deployment.yaml
+          images: |
+            ${{ vars.DOCKERHUB_USERNAME }}/fiap-tech-challenge-ms-order:${{ vars.DOCKER_IMAGE_DEPLOY_VERSION }}
+
+    

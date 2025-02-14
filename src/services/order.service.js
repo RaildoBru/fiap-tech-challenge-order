@@ -1,31 +1,60 @@
-import Order from "../models/order.model.js";
-import axios from "axios";
+import Order from '../models/order.model.js';
 
-//const PRODUCT_SERVICE_URL = "http://localhost:4000/products";
+const OrderService = {
+  createOrder: async (customerId, items) => {
+    let totalPrice = 0;
 
-/*const createOrder = async (customerName, items) => {
-  let totalPrice = 0;
-  
-  for (let item of items) {
-    const { data: product } = await axios.get(`${PRODUCT_SERVICE_URL}/${item.productId}`);
-    totalPrice += product.price * item.quantity;
-  }
+    // Enrich items with product details
+    const enrichedItems = await Promise.all(items.map(async (item) => {
+      const productDetails = await OrderService.fetchProductDetails(item.productId);
+      if (!productDetails) {
+        throw new Error(`Product details not found for ID: ${item.productId}`);
+      }
+      totalPrice += productDetails.price * item.quantity;
+      return {
+        ...item,
+        productName: productDetails.name,
+        price: productDetails.price,
+        description: productDetails.description,
+        category: productDetails.category,
+        quantity: item.quantity
+      };
+    }));
 
-  const order = await Order.create({ customerName, items, totalPrice });
-  return order;
-};*/
+    console.log('Enriched Items:', enrichedItems);
 
-const getOrders = async () => {
+    const order = await Order.create({
+      customerId,
+      items: enrichedItems,
+      totalPrice
+    });
+    return order;
+  },
+
+  getOrders: async () => {
     return await Order.find();
+  },
+
+  getOrderById: async (id) => {
+    return await Order.findById(id);
+  },
+
+  updateOrderStatus: async (id, status) => {
+    return await Order.findByIdAndUpdate(id, { status }, { new: true });
+  },
+
+  fetchProductDetails: async (productId) => {
+    try {
+      // Using the internal k8s service DNS
+      const response = await fetch(`http://ms-product:8080/api/v1/products/${productId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch product details for ID: ${productId}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error(`Error fetching product details: ${error.message}`);
+      throw error;
+    }
+  }
 };
-
-const getOrderById = async (id) => {
-  return await Order.findById(id);
-};
-
-/*const updateOrderStatus = async (id, status) => {
-  return await Order.findByIdAndUpdate(id, { status }, { new: true });
-};*/
-
-export default { getOrders, getOrderById };
-//export default { createOrder, getOrders, getOrderById, updateOrderStatus };
+export default OrderService;
