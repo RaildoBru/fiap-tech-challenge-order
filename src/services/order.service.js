@@ -7,6 +7,9 @@ const OrderService = {
     // Enrich items with product details
     const enrichedItems = await Promise.all(items.map(async (item) => {
       const productDetails = await OrderService.fetchProductDetails(item.productId);
+      if (!productDetails) {
+        throw new Error(`Product details not found for ID: ${item.productId}`);
+      }
       totalPrice += productDetails.price * item.quantity;
       return {
         ...item,
@@ -18,7 +21,13 @@ const OrderService = {
       };
     }));
 
-    const order = await Order.create({ customerId, enrichedItems, totalPrice });
+    console.log('Enriched Items:', enrichedItems);
+
+    const order = await Order.create({
+      customerId,
+      items: enrichedItems,
+      totalPrice
+    });
     return order;
   },
 

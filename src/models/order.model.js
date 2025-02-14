@@ -20,7 +20,7 @@ const OrderSchema = new mongoose.Schema(
         status: { type: String, required: true, default: "PENDING" },
         createdAt: { type: Date, required: true, default: Date.now },
         updatedAt: { type: Date, required: true, default: Date.now }
-    }, { collection: 'Order' }
+    }, { collection: 'orders' }
 );
 
 

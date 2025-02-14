@@ -1,4 +1,5 @@
 import OrderService from "../services/order.service.js";
+import OrderStatus from "../models/status.model.js";
 
 const OrderController = {
   createOrder: async (req, res) => {
@@ -41,9 +42,15 @@ const OrderController = {
   updateOrderStatus: async (req, res) => {
     try {
       const { status } = req.body;
-
-      if (!status) return res.status(400).json({ message: "Status não informado" });
-
+      console.log(status);
+      console.log(Object.values(OrderStatus));
+      if (!Object.values(OrderStatus).includes(status) || !status) {
+        return res.status(400).json({
+          message: "Status inválido",
+          validStatus: Object.values(OrderStatus)
+        });
+      }
+      console.log(req.params.id);
       const updatedOrder = await OrderService.updateOrderStatus(req.params.id, status);
       if (!updatedOrder) return res.status(404).json({ message: "Pedido não encontrado" });
 
