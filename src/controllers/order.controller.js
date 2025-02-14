@@ -1,4 +1,5 @@
 import OrderService from "../services/order.service.js";
+import OrderStatus from "../models/status.model.js";
 
 const OrderController = {
   createOrder: async (req, res) => {
@@ -7,7 +8,7 @@ const OrderController = {
 
       if (!items) return res.status(400).json({ message: "Items não informados" });
       for (let item of items) {
-        if (!item.productId || !item.productName || !item.quantity || !item.price) {
+        if (!item.productId || !item.quantity) {
           return res.status(400).json({ message: "Item inválido" });
         }
       }
@@ -41,13 +42,18 @@ const OrderController = {
   updateOrderStatus: async (req, res) => {
     try {
       const { status } = req.body;
-
-      if (!status) return res.status(400).json({ message: "Status não informado" });
-
-      const order = await OrderService.getOrderById(req.params.id);
-      if (!order) return res.status(404).json({ message: "Pedido não encontrado" });
-
+      console.log(status);
+      console.log(Object.values(OrderStatus));
+      if (!Object.values(OrderStatus).includes(status) || !status) {
+        return res.status(400).json({
+          message: "Status inválido",
+          validStatus: Object.values(OrderStatus)
+        });
+      }
+      console.log(req.params.id);
       const updatedOrder = await OrderService.updateOrderStatus(req.params.id, status);
+      if (!updatedOrder) return res.status(404).json({ message: "Pedido não encontrado" });
+
       res.status(200).json(updatedOrder);
     } catch (error) {
       res.status(500).json({ message: error.message });

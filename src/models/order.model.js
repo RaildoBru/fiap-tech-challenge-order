@@ -6,16 +6,21 @@ const OrderSchema = new mongoose.Schema(
         items: [
             {
                 productId: { type: String, required: true },
-                productName: { type: String, required: true },
+                name: String,
+                price: Number,
+                description: String,
+                category: {
+                    type: String,
+                    enum: ["Food", "Beverage", "Snack", "Dessert"],
+                },
                 quantity: { type: Number, required: true },
-                price: { type: Number, required: true }
             },
         ],
         totalPrice: { type: Number, required: true },
         status: { type: String, required: true, default: "PENDING" },
         createdAt: { type: Date, required: true, default: Date.now },
         updatedAt: { type: Date, required: true, default: Date.now }
-    }, { collection: 'Order' }
+    }, { collection: 'orders' }
 );
 
 
