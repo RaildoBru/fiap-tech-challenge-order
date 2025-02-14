@@ -7,7 +7,7 @@ const OrderController = {
 
       if (!items) return res.status(400).json({ message: "Items não informados" });
       for (let item of items) {
-        if (!item.productId || !item.productName || !item.quantity || !item.price) {
+        if (!item.productId || !item.quantity) {
           return res.status(400).json({ message: "Item inválido" });
         }
       }
@@ -44,10 +44,9 @@ const OrderController = {
 
       if (!status) return res.status(400).json({ message: "Status não informado" });
 
-      const order = await OrderService.getOrderById(req.params.id);
-      if (!order) return res.status(404).json({ message: "Pedido não encontrado" });
-
       const updatedOrder = await OrderService.updateOrderStatus(req.params.id, status);
+      if (!updatedOrder) return res.status(404).json({ message: "Pedido não encontrado" });
+
       res.status(200).json(updatedOrder);
     } catch (error) {
       res.status(500).json({ message: error.message });

@@ -177,7 +177,6 @@ describe('Order Controller', () => {
                 json: jest.fn()
             };
 
-            OrderService.getOrderById.mockResolvedValue({ orderId: 1 });
             OrderService.updateOrderStatus.mockResolvedValue({ orderId: 1, status: 'DELIVERED' });
 
             await OrderController.updateOrderStatus(req, res);
@@ -199,7 +198,7 @@ describe('Order Controller', () => {
                 json: jest.fn()
             };
 
-            OrderService.getOrderById.mockResolvedValue(null);
+            OrderService.updateOrderStatus.mockResolvedValue(null);
 
             await OrderController.updateOrderStatus(req, res);
             expect(res.status).toHaveBeenCalledWith(404);
@@ -237,7 +236,7 @@ describe('Order Controller', () => {
             };
 
             // Mock a database error
-            OrderService.getOrderById.mockRejectedValue(new Error('Connection failed'));
+            OrderService.updateOrderStatus.mockRejectedValue(new Error('Connection failed'));
 
             await OrderController.updateOrderStatus(req, res);
             expect(res.status).toHaveBeenCalledWith(500);

@@ -6,9 +6,14 @@ const OrderSchema = new mongoose.Schema(
         items: [
             {
                 productId: { type: String, required: true },
-                productName: { type: String, required: true },
+                name: String,
+                price: Number,
+                description: String,
+                category: {
+                    type: String,
+                    enum: ["Food", "Beverage", "Snack", "Dessert"],
+                },
                 quantity: { type: Number, required: true },
-                price: { type: Number, required: true }
             },
         ],
         totalPrice: { type: Number, required: true },
