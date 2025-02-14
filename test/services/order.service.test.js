@@ -5,6 +5,9 @@ import Order from '../../src/models/order.model';
 jest.mock('../../src/models/order.model');
 
 describe('OrderService', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
     describe('createOrder', () => {
         it('should create an order', async () => {
             const customerId = '123';
@@ -89,6 +92,19 @@ describe('OrderService', () => {
             global.fetch = jest.fn().mockResolvedValue({
                 ok: false
             });
+
+            try {
+                await OrderService.fetchProductDetails(productId);
+            } catch (e) {
+                expect(e).toEqual(error);
+            }
+        });
+
+        it('should handle network errors', async () => {
+            const productId = '123';
+            const networkError = new Error('Network error');
+
+            global.fetch = jest.fn().mockRejectedValue(networkError);
 
             try {
                 await OrderService.fetchProductDetails(productId);
