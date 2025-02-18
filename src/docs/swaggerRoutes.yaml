@@ -1,0 +1,721 @@
+paths:
+  /customer/{document}:
+    get:
+      summary: Identifica o cliente baseado no documento
+      tags:
+        - Customer
+      responses:
+        200:
+          description: Cliente identificado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "b43a93cb-dbf1-4b52-bb85-44218404ec2c"
+                  name:
+                    type: string
+                    example: "email"
+                  email:
+                    type: string
+                    example: "email@email.com"
+                  document:
+                    type: string
+                    example: "656565566"
+        400:
+          description: Documento não fornecido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Documento não fornecido"
+/customer:
+    post:
+      summary: Cadastra um novo cliente
+      tags:
+        - Customer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "João Silva"
+                email:
+                  type: string
+                  example: "joao.silva@email.com"
+                document:
+                  type: string
+                  example: "12345678901"
+      responses:
+        201:
+          description: Cliente cadastrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "b43a93cb-dbf1-4b52-bb85-44218404ec2c"
+                  name:
+                    type: string
+                    example: "João Silva"
+                  email:
+                    type: string
+                    example: "joao.silva@email.com"
+                  document:
+                    type: string
+                    example: "12345678901"
+        400:
+          description: Campos obrigatórios não fornecidos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Campos obrigatórios não fornecidos"
+/products:
+    get:
+      summary: Retorna a lista de produtos
+      tags:
+        - Products
+      responses:
+        200:
+          description: Lista de produtos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: "670de8512cd9cd6432f0638d"
+                    name:
+                      type: string
+                      example: "Casquinha Super Chocolate"
+                    price:
+                      type: number
+                      example: 2.98
+                    createdAt:
+                      type: string
+                      format: date-time
+                      example: "2024-10-15T03:58:09.405Z"
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      example: "2024-10-15T03:58:09.405Z"
+                    description:
+                      type: string
+                      example: "Sorvete de chocolate servido em uma casquinha"
+                    category:
+                      type: string
+                      example: "Dessert"
+    post:
+      summary: Cria um novo produto
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - price
+                - description
+                - category
+              properties:
+                name:
+                  type: string
+                  example: "Hamburger"
+                price:
+                  type: number
+                  example: 10.99
+                description:
+                  type: string
+                  example: "Delicioso hambúrguer artesanal"
+                category:
+                  type: string
+                  enum: ["Food","Beverage", "Snack", "Dessert"]
+                  example: "Food"
+      responses:
+        201:
+          description: Produto criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                  price:
+                    type: number
+                  description:
+                    type: string
+                  category:
+                    type: string
+        400:
+          description: Erro de validação
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Erro de validacao no campo"
+/products/{id}:
+    get:
+      summary: Busca um produto pelo ID
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do produto a ser buscado
+          schema:
+            type: string
+            example: "670f016158d8fb8fd69c479d"
+      responses:
+        200:
+          description: Produto encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: "670f016158d8fb8fd69c479d"
+                  name:
+                    type: string
+                    example: "Batata frita com cheddar e bacon"
+                  price:
+                    type: number
+                    example: 15.99
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2024-10-15T23:57:20.331Z"
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: "2024-10-15T23:57:20.331Z"
+                  description:
+                    type: string
+                    example: "Batata frita crocante com cheddar e bacon."
+                  category:
+                    type: string
+                    example: "Food"
+        404:
+          description: Produto não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Produto não encontrado"
+/products/{id}/update:
+    put:
+      summary: Atualiza um produto existente
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID do produto a ser atualizado
+          schema:
+            type: string
+            example: "670f016158d8fb8fd69c479d"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - price
+                - description
+                - category
+              properties:
+                name:
+                  type: string
+                  example: "Batata frita com cheddar e bacon (Atualizada)"
+                price:
+                  type: number
+                  example: 17.99
+                description:
+                  type: string
+                  example: "Batata frita crocante com cheddar, bacon e molho especial."
+                category:
+                  type: string
+                  example: "Food"
+      responses:
+        200:
+          description: Produto atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: "670f016158d8fb8fd69c479d"
+                  name:
+                    type: string
+                    example: "Batata frita com cheddar e bacon (Atualizada)"
+                  price:
+                    type: number
+                    example: 17.99
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2024-10-15T23:57:20.331Z"
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: "2024-10-16T12:00:00.000Z"
+                  description:
+                    type: string
+                    example: "Batata frita crocante com cheddar, bacon e molho especial."
+                  category:
+                    type: string
+                    example: "Food"
+        #400:
+        #  description: Erro de validação - Campos inválidos
+        #  content:
+        #    application/json:
+        #      schema:
+        #        type: object
+        #        properties:
+        #          error:
+        #            type: string
+        #            example: "Campos inválidos. Certifique-se de enviar name, price, description e category."
+        #404:
+        #  description: Produto não encontrado
+        #  content:
+        #    application/json:
+        #      schema:
+        #        type: object
+        #        properties:
+        #          error:
+        #            type: string
+        #            example: "Produto não encontrado"
+/orders:
+    get:
+      summary: Retorna todos os pedidos
+      tags:
+        - Orders
+      responses:
+        200:
+          description: Lista de pedidos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: "670de28b82f93e1a75a36ec2"
+                    customerId:
+                      type: string
+                      example: "66fa13bda49ad20e4fe1b5ba"
+                    products:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "Batata"
+                          price:
+                            type: number
+                            example: 1.2
+                          quantity:
+                            type: integer
+                            example: 1
+                          description:
+                            type: string
+                            example: "Batata frita"
+                          category:
+                            type: string
+                            example: "Food"
+                    total:
+                      type: number
+                      example: 32.08
+                    createdAt:
+                      type: string
+                      format: date-time
+                      example: "2024-10-15T03:33:31.269Z"
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      example: "2024-10-15T03:33:31.269Z"
+                    status:
+                      type: string
+                      example: "Ready"
+                    statusNum:
+                      type: integer
+                      example: 3
+    post:
+      summary: Cria um novo pedido
+      tags:
+        - Orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type: string
+                  example: "66fa13bda49ad20e4fe1b5ba"
+                products:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "66fa134ea49ad20e4fe1b5b9"
+                      quantity:
+                        type: integer
+                        example: 1
+      responses:
+        201:
+          description: Pedido criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Pedido criado com sucesso"
+                  order:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: "1623145678901"
+                      customerId:
+                        type: string
+                        example: "66fa13bda49ad20e4fe1b5ba"
+                      products:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "Produto Exemplo"
+                            price:
+                              type: number
+                              example: 10
+                            quantity:
+                              type: integer
+                              example: 1
+                            description:
+                              type: string
+                              example: "Descrição do produto"
+                            category:
+                              type: string
+                              example: "Food"
+                      total:
+                        type: number
+                        example: 40
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2024-10-15T03:33:31.269Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2024-10-15T03:33:31.269Z"
+                      status:
+                        type: string
+                        example: "Pending"
+                      statusNum:
+                        type: integer
+                        example: 1
+        400:
+          description: Dados incompletos para criação de pedido
+/orders/status:
+    get:
+      summary: Retorna a lista de pedidos ordenados por pedidos "Prontos" criados pela data mais antiga
+      tags:
+        - Orders
+      responses:
+        200:
+          description: Lista de pedidos ordenada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: "670de28b82f93e1a75a36ec2"
+                    customerId:
+                      type: string
+                      example: "66fa13bda49ad20e4fe1b5ba"
+                    products:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                            example: "Batata"
+                          price:
+                            type: number
+                            example: 1.2
+                          quantity:
+                            type: integer
+                            example: 1
+                          description:
+                            type: string
+                            example: "Batata frita"
+                          category:
+                            type: string
+                            example: "Food"
+                    total:
+                      type: number
+                      example: 32.08
+                    createdAt:
+                      type: string
+                      format: date-time
+                      example: "2024-10-15T03:33:31.269Z"
+                    updatedAt:
+                      type: string
+                      format: date-time
+                      example: "2024-10-15T03:33:31.269Z"
+                    status:
+                      type: string
+                      example: "Ready"
+                    statusNum:
+                      type: integer
+                      example: 3
+/orders/{id}:
+    get:
+      summary: Retorna um pedido específico pelo ID
+      tags:
+        - Orders
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID do pedido a ser retornado
+      responses:
+        200:
+          description: Pedido retornado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: "670de28b82f93e1a75a36ec2"
+                  customerId:
+                    type: string
+                    example: "66fa13bda49ad20e4fe1b5ba"
+                  products:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          example: "Batata"
+                        price:
+                          type: number
+                          example: 1.2
+                        quantity:
+                          type: integer
+                          example: 1
+                        description:
+                          type: string
+                          example: "Batata frita"
+                        category:
+                          type: string
+                          example: "Food"
+                  total:
+                    type: number
+                    example: 14.19
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2024-10-15T03:33:31.269Z"
+                  updatedAt:
+                    type: string
+                    format: date-time
+                    example: "2024-10-15T03:33:31.269Z"
+                  status:
+                    type: string
+                    example: "Ready"
+                  statusNum:
+                    type: integer
+                    example: 3
+        404:
+          description: Pedido não encontrado
+/orders/{id}/status:
+    put:
+      summary: Atualiza o status de um pedido para "Preparing"
+      tags:
+        - Orders
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID do pedido a ser atualizado
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: "Preparing"
+                  enum:
+                    - "Preparing"
+      responses:
+        200:
+          description: Status do pedido atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Status atualizado com sucesso"
+                  order:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: "670de28b82f93e1a75a36ec2"
+                      customerId:
+                        type: string
+                        example: "66fa13bda49ad20e4fe1b5ba"
+                      products:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                              example: "Batata"
+                            price:
+                              type: number
+                              example: 1.2
+                            quantity:
+                              type: integer
+                              example: 1
+                            description:
+                              type: string
+                              example: "Batata frita"
+                            category:
+                              type: string
+                              example: "Food"
+                      total:
+                        type: number
+                        example: 14.19
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2024-10-15T03:33:31.269Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2024-10-15T03:33:31.269Z"
+                      status:
+                        type: string
+                        example: "Preparing"
+                      statusNum:
+                        type: integer
+                        example: 2
+        #400:
+        #  description: O status fornecido não é válido (deve ser "Preparing")
+        #404:
+        #  description: Pedido não encontrado
+/payment:
+    post:
+      summary: Processa o pagamento via MercadoPago
+      tags:
+        - Payment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                transaction_amount:
+                  type: number
+                  example: 6.00
+                description:
+                  type: string
+                  example: "pix"
+                payment_method_id:
+                  type: string
+                  example: "debin_transfer"
+                payer:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: "nome@gmail.com"
+      responses:
+        200:
+          description: Pagamento processado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  qr_code:
+                    type: string
+                    example: "00020126580014br.gov.bcb.pix0136b76aa9c2-2ec4-4110-954e-ebfe34f05b61520400005303986540512.005802BR5910SA6951Ci416009Sao Paulo62230519mpqrinter1322175054630496AB"
+                  url:
+                    type: string
+                    example: "https://www.mercadopago.com.br/sandbox/payments/1322175054/ticket?caller_id=1853146600&hash=966c5124-fa06-4a61-95a9-6ac8196c4b1e"
+        400:
+          description: Dados incompletos para processamento de pagamento
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Dados incompletos para processamento de pagamento"
